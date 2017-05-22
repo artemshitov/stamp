@@ -1,6 +1,3 @@
-#![allow(unused_variables)]
-#![allow(dead_code)]
-
 #[macro_use]
 extern crate clap;
 #[macro_use]
