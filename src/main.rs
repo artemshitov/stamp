@@ -30,7 +30,7 @@ fn run() -> Result<(), Error> {
     let source_arg = matches.value_of("source").ok_or(Error::SourceNotProvided)?;
     let dest_arg = matches.value_of("destination").unwrap_or("");
 
-    let source = stamp::find_stamp(Path::new(source_arg))?;
+    let source = find_source(source_arg)?;
     let dest = find_destination(dest_arg)?;
 
     let files = file::read_all_files(&source)?;
@@ -42,6 +42,26 @@ fn run() -> Result<(), Error> {
     stamp::write_files(&dest, &rendered)?;
 
     Ok(())
+}
+
+pub fn find_source(source_arg: &str) -> Result<PathBuf, Error> {
+    let mut path = Path::new(source_arg).to_owned();
+    if path.is_relative() {
+        let in_current_dir = env::current_dir()?.join(&path);
+        if in_current_dir.exists() {
+            return Ok(in_current_dir);
+        } else {
+            path = env::home_dir()
+                .ok_or(Error::HomeDirNotAccessible)?
+                .join(".stamps")
+                .join(&path);
+        }
+    }
+    if path.exists() {
+        Ok(path)
+    } else {
+        Err(Error::StampNotFound)
+    }
 }
 
 fn find_destination(dest_arg: &str) -> Result<PathBuf, Error> {
