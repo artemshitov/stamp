@@ -1,5 +1,6 @@
 #[macro_use]
 extern crate clap;
+extern crate colored;
 #[macro_use]
 extern crate nom;
 #[macro_use]
@@ -14,6 +15,7 @@ mod template;
 mod template_file;
 
 use clap::{App, AppSettings};
+use colored::*;
 
 use std::env;
 use std::path::{Path, PathBuf};
@@ -52,7 +54,7 @@ fn run() -> Result<()> {
         let path = dest.join(&f.path);
         print!("Writing {}... ", &f.path.to_str().unwrap());
         file::write_file(&path, &f.body)?;
-        println!("OK");
+        println!("{}", "OK".green());
     }
 
     println!("\nDone");
