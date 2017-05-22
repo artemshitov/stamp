@@ -36,8 +36,6 @@ fn run() -> Result<(), Error> {
     let source = stamp::find_stamp(Path::new(source_arg))?;
     let dest = find_destination(dest_arg)?;
 
-    println!("{:?}", dest);
-
     let files = file::read_all_files(&source)?;
     let (templates, vars) = stamp::compile_templates(&files);
 
