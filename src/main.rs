@@ -6,6 +6,8 @@ extern crate nom;
 extern crate quick_error;
 extern crate walkdir;
 
+use clap::{App, AppSettings};
+
 use std::env;
 use std::path::{Path, PathBuf};
 
@@ -17,9 +19,8 @@ mod stamp;
 mod template;
 mod template_file;
 
-use clap::{App, AppSettings};
-
 use error::Error;
+use template_file::RenderedFile;
 
 fn run() -> Result<(), Error> {
     let yaml = load_yaml!("cli.yaml");
@@ -39,7 +40,10 @@ fn run() -> Result<(), Error> {
     let (templates, vars) = stamp::compile_templates(&files);
 
     let conf = questions::get_vars(&vars)?;
-    let rendered = stamp::render_templates(&templates, &conf)?;
+    let rendered = templates
+        .iter()
+        .map(|t| t.render(&conf))
+        .collect::<Result<Vec<RenderedFile>, Error>>()?;
 
     stamp::write_files(&dest, &rendered)?;
 
