@@ -1,0 +1,10 @@
+[package]
+name = "stamp"
+version = "0.1.0"
+authors = ["Artem Shitov <artemshitov@yandex-team.ru>"]
+
+[dependencies]
+clap = {version = "2", features = ["yaml"]}
+nom = "^3.0"
+quick-error = "~1.2.0"
+walkdir = "0.1.5"

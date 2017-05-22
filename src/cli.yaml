@@ -1,0 +1,19 @@
+name: Stamp
+version: 1.0.0
+author: Artem Shitov <inbox@artemshitov.ru>
+args:
+    - dry:
+        short: d
+        long: dry-run
+        help: Do not write files
+    - force:
+        short: f
+        long: force
+        help: Overwrite files with duplicate names
+    - source:
+        required: true
+        index: 1
+        help: Where to pick up template files
+    - destination:
+        index: 2
+        help: Where to write resulting files. Default is current working directory
