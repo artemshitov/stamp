@@ -5,6 +5,7 @@ authors = ["Artem Shitov <inbox@artemshitov.ru>"]
 
 [dependencies]
 clap = {version = "2", features = ["yaml"]}
+colored = "1.5.1"
 nom = "^3.0"
 quick-error = "~1.2.0"
 walkdir = "0.1.5"
