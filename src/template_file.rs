@@ -45,3 +45,16 @@ impl<'a> TemplateFile<'a> {
            })
     }
 }
+
+pub fn compile_templates(files: &[(PathBuf, Vec<u8>)]) -> (Vec<TemplateFile>, HashSet<&[u8]>) {
+    let mut vars = HashSet::new();
+    let mut templates = Vec::new();
+
+    for &(ref path, ref content) in files {
+        let file = TemplateFile::parse(path, content);
+        file.extract_vars(&mut vars);
+        templates.push(file);
+    }
+
+    (templates, vars)
+}

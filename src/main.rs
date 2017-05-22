@@ -10,7 +10,6 @@ mod error;
 mod file;
 mod parser;
 mod questions;
-mod stamp;
 mod template;
 mod template_file;
 
@@ -20,7 +19,7 @@ use std::env;
 use std::path::{Path, PathBuf};
 
 use error::{Error, Result};
-use template_file::RenderedFile;
+use template_file::{RenderedFile, compile_templates};
 
 fn run() -> Result<()> {
     let yaml = load_yaml!("cli.yaml");
@@ -37,7 +36,7 @@ fn run() -> Result<()> {
     let dest = find_destination(dest_arg)?;
 
     let files = file::read_all_files(&source)?;
-    let (templates, vars) = stamp::compile_templates(&files);
+    let (templates, vars) = compile_templates(&files);
 
     let conf = questions::get_vars(&vars)?;
     let rendered = templates
@@ -45,7 +44,10 @@ fn run() -> Result<()> {
         .map(|t| t.render(&conf))
         .collect::<Result<Vec<RenderedFile>>>()?;
 
-    stamp::write_files(&dest, &rendered)?;
+    for f in rendered {
+        let path = dest.join(f.path);
+        file::write_file(&path, &f.body)?;
+    }
 
     Ok(())
 }
