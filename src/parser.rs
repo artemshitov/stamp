@@ -41,4 +41,3 @@ named!(pub template<&[u8], Vec<Chunk>>,
         alt!(var | literal)
     )
 );
-

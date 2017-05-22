@@ -27,7 +27,9 @@ fn run() -> Result<(), Error> {
         .setting(AppSettings::ArgRequiredElseHelp)
         .get_matches();
 
-    let source_arg = matches.value_of("source").expect("Source is a required argument");
+    let source_arg = matches
+        .value_of("source")
+        .expect("Source is a required argument");
     let dest_arg = matches.value_of("destination").unwrap_or("");
 
     let source = find_source(source_arg)?;
