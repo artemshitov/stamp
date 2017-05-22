@@ -3,7 +3,7 @@ use std::collections::{HashSet, HashMap};
 
 use nom::IResult;
 
-use error::Error;
+use error::{Error, Result};
 use parser;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -25,7 +25,7 @@ impl<'a> Template<'a> {
         }
     }
 
-    pub fn render(&self, vars: &HashMap<&[u8], String>) -> Result<Vec<u8>, Error> {
+    pub fn render(&self, vars: &HashMap<&[u8], String>) -> Result<Vec<u8>> {
         let mut buf = Vec::new();
         for chunk in &self.chunks {
             match *chunk {

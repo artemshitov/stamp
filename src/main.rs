@@ -19,10 +19,10 @@ mod stamp;
 mod template;
 mod template_file;
 
-use error::Error;
+use error::{Error, Result};
 use template_file::RenderedFile;
 
-fn run() -> Result<(), Error> {
+fn run() -> Result<()> {
     let yaml = load_yaml!("cli.yaml");
     let matches = App::from_yaml(yaml)
         .setting(AppSettings::ArgRequiredElseHelp)
@@ -43,14 +43,14 @@ fn run() -> Result<(), Error> {
     let rendered = templates
         .iter()
         .map(|t| t.render(&conf))
-        .collect::<Result<Vec<RenderedFile>, Error>>()?;
+        .collect::<Result<Vec<RenderedFile>>>()?;
 
     stamp::write_files(&dest, &rendered)?;
 
     Ok(())
 }
 
-pub fn find_source(source_arg: &str) -> Result<PathBuf, Error> {
+pub fn find_source(source_arg: &str) -> Result<PathBuf> {
     let mut path = Path::new(source_arg).to_owned();
     if path.is_relative() {
         let in_current_dir = env::current_dir()?.join(&path);
@@ -70,7 +70,7 @@ pub fn find_source(source_arg: &str) -> Result<PathBuf, Error> {
     }
 }
 
-fn find_destination(dest_arg: &str) -> Result<PathBuf, Error> {
+fn find_destination(dest_arg: &str) -> Result<PathBuf> {
     let path = Path::new(dest_arg).to_owned();
     if path.is_relative() {
         Ok(env::current_dir()?.join(&path))

@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 use std::path::{Path, PathBuf};
 
-use error::Error;
+use error::Result;
 use file::write_file;
 use template_file::{RenderedFile, TemplateFile};
 
@@ -18,7 +18,7 @@ pub fn compile_templates(files: &[(PathBuf, Vec<u8>)]) -> (Vec<TemplateFile>, Ha
     (templates, vars)
 }
 
-pub fn write_files(root: &Path, rendered: &[RenderedFile]) -> Result<(), Error> {
+pub fn write_files(root: &Path, rendered: &[RenderedFile]) -> Result<()> {
     let root = root.to_owned();
     for f in rendered {
         write_file(&root.join(&f.path), &f.body)?;

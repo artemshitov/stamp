@@ -1,6 +1,7 @@
 use std::io;
 use std::string;
 use std::path;
+use std::result;
 use walkdir;
 
 quick_error! {
@@ -33,3 +34,5 @@ quick_error! {
         DirNotFound {}
     }
 }
+
+pub type Result<T> = result::Result<T, Error>;

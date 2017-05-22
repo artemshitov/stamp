@@ -4,9 +4,9 @@ use std::path::{Path, PathBuf};
 
 use walkdir::WalkDir;
 
-use error::Error;
+use error::{Error, Result};
 
-pub fn read_file<T: AsRef<Path>>(path: T) -> Result<Vec<u8>, Error> {
+pub fn read_file<T: AsRef<Path>>(path: T) -> Result<Vec<u8>> {
     let mut file = File::open(path)?;
     let file_len = file.metadata()?.len();
     let mut buf = Vec::with_capacity(file_len as usize + 1);
@@ -14,7 +14,7 @@ pub fn read_file<T: AsRef<Path>>(path: T) -> Result<Vec<u8>, Error> {
     Ok(buf)
 }
 
-pub fn read_all_files<T: AsRef<Path>>(root: T) -> Result<Vec<(PathBuf, Vec<u8>)>, Error> {
+pub fn read_all_files<T: AsRef<Path>>(root: T) -> Result<Vec<(PathBuf, Vec<u8>)>> {
     let mut result = Vec::new();
     for dir_entry in WalkDir::new(&root) {
         let entry = dir_entry?;
@@ -28,7 +28,7 @@ pub fn read_all_files<T: AsRef<Path>>(root: T) -> Result<Vec<(PathBuf, Vec<u8>)>
     Ok(result)
 }
 
-pub fn write_file(path: &Path, content: &[u8]) -> Result<(), Error> {
+pub fn write_file(path: &Path, content: &[u8]) -> Result<()> {
     create_dir_all(path.to_owned().parent().ok_or(Error::DirNotFound)?)?;
     let mut file = File::create(path)?;
     file.write_all(content)?;

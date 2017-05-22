@@ -2,7 +2,7 @@ use std::collections::{HashSet, HashMap};
 use std::path::{Path, PathBuf};
 use std::string::String;
 
-use error::Error;
+use error::Result;
 use template::Template;
 
 #[derive(Debug)]
@@ -35,7 +35,7 @@ impl<'a> TemplateFile<'a> {
         self.body.extract_vars(target);
     }
 
-    pub fn render(&self, vars: &HashMap<&[u8], String>) -> Result<RenderedFile, Error> {
+    pub fn render(&self, vars: &HashMap<&[u8], String>) -> Result<RenderedFile> {
         let path = PathBuf::from(String::from_utf8(self.path.render(vars)?)?);
         let body = self.body.render(vars)?;
 

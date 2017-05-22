@@ -2,9 +2,9 @@ use std::collections::{HashMap, HashSet};
 use std::io::{stdin, stdout, Write};
 use std::string::String;
 
-use error::Error;
+use error::Result;
 
-fn ask(question: &str) -> Result<String, Error> {
+fn ask(question: &str) -> Result<String> {
     print!("{}: ", question);
     let _ = stdout().flush();
     let mut buf = String::new();
@@ -12,7 +12,7 @@ fn ask(question: &str) -> Result<String, Error> {
     Ok(buf.trim().to_owned())
 }
 
-pub fn get_vars<'a>(questions: &'a HashSet<&'a [u8]>) -> Result<HashMap<&'a [u8], String>, Error> {
+pub fn get_vars<'a>(questions: &'a HashSet<&'a [u8]>) -> Result<HashMap<&'a [u8], String>> {
     let mut result = HashMap::new();
     for question in questions {
         let answer = ask(&String::from_utf8(question.to_vec())?)?;
