@@ -6,11 +6,6 @@ extern crate nom;
 extern crate quick_error;
 extern crate walkdir;
 
-use clap::{App, AppSettings};
-
-use std::env;
-use std::path::{Path, PathBuf};
-
 mod error;
 mod file;
 mod parser;
@@ -18,6 +13,11 @@ mod questions;
 mod stamp;
 mod template;
 mod template_file;
+
+use clap::{App, AppSettings};
+
+use std::env;
+use std::path::{Path, PathBuf};
 
 use error::{Error, Result};
 use template_file::RenderedFile;
