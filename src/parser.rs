@@ -1,4 +1,4 @@
-use nom::IResult;
+use nom::{IResult, alpha, alphanumeric};
 
 use template::Chunk;
 
@@ -6,12 +6,24 @@ fn rest(i: &[u8]) -> IResult<&[u8], &[u8]> {
     IResult::Done(&[], i)
 }
 
+named!(var_name<&[u8], &[u8]>,
+    recognize!(
+        do_parse!(
+            alpha >>
+            many0!(alt!(alphanumeric | tag!("_"))) >>
+            ()
+        )
+    )
+);
+
 named!(var<&[u8], Chunk>,
     map!(
-        delimited!(
-            tag!("{%"),
-            take_until!("%}"),
-            tag!("%}")
+        ws!(
+            delimited!(
+                tag!("{%"),
+                var_name,
+                tag!("%}")
+            )
         ),
         Chunk::Var
     )
@@ -29,3 +41,4 @@ named!(pub template<&[u8], Vec<Chunk>>,
         alt!(var | literal)
     )
 );
+
