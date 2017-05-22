@@ -21,11 +21,7 @@ pub fn compile_templates(files: &[(PathBuf, Vec<u8>)]) -> (Vec<TemplateFile>, Ha
 pub fn render_templates(templates: &[TemplateFile],
                         vars: &HashMap<&[u8], String>)
                         -> Result<Vec<RenderedFile>, Error> {
-    let mut result = Vec::new();
-    for template in templates {
-        result.push(template.render(vars)?);
-    }
-    Ok(result)
+    templates.iter().map(|t| t.render(vars)).collect()
 }
 
 pub fn write_files(root: &Path, rendered: &[RenderedFile]) -> Result<(), Error> {
