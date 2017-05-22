@@ -38,16 +38,24 @@ fn run() -> Result<()> {
     let files = file::read_all_files(&source)?;
     let (templates, vars) = compile_templates(&files);
 
+    println!("Fill in the variable values:");
     let conf = questions::get_vars(&vars)?;
+
     let rendered = templates
         .iter()
         .map(|t| t.render(&conf))
         .collect::<Result<Vec<RenderedFile>>>()?;
 
+    println!("\nFiles will be saved in {}", dest.to_str().unwrap());
+
     for f in rendered {
-        let path = dest.join(f.path);
+        let path = dest.join(&f.path);
+        print!("Writing {}... ", &f.path.to_str().unwrap());
         file::write_file(&path, &f.body)?;
+        println!("OK");
     }
+
+    println!("\nDone");
 
     Ok(())
 }
