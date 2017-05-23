@@ -66,5 +66,12 @@ mod test {
         let chunks = vec![Chunk::Str(b"Hello, "), Chunk::Var(b"who"), Chunk::Str(b"!")];
         assert_eq!(Template { chunks: chunks }, parsed);
     }
+
+    #[test]
+    fn escaped_parsing() {
+        let parsed = Template::parse(b"Hello, \\{% who %}!").unwrap();
+        let chunks = vec![Chunk::Str(b"Hello, {% who %}!")];
+        assert_eq!(Template { chunks: chunks }, parsed)
+    }
 }
 
