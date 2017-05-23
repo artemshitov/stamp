@@ -6,18 +6,18 @@ use error::{Error, Result};
 use parser;
 
 #[derive(Clone, PartialEq, Eq)]
-pub enum Chunk<'a> {
-    Str(&'a [u8]),
-    Var(&'a [u8]),
+pub enum Chunk {
+    Str(Vec<u8>),
+    Var(Vec<u8>),
 }
 
 #[derive(Debug, PartialEq, Eq)]
-pub struct Template<'a> {
-    chunks: Vec<Chunk<'a>>,
+pub struct Template {
+    chunks: Vec<Chunk>,
 }
 
-impl<'a> Template<'a> {
-    pub fn parse(i: &'a [u8]) -> Result<Template<'a>> {
+impl Template {
+    pub fn parse(i: &[u8]) -> Result<Template> {
         Ok(Template { chunks: parser::template(i).to_full_result()? })
     }
 
@@ -25,32 +25,30 @@ impl<'a> Template<'a> {
         let mut buf = Vec::new();
         for chunk in &self.chunks {
             match *chunk {
-                Chunk::Str(s) => buf.extend_from_slice(s),
-                Chunk::Var(v) => {
-                    buf.extend_from_slice(vars.get(v).ok_or(Error::VarNotFound)?.as_bytes())
+                Chunk::Str(ref s) => buf.extend(s),
+                Chunk::Var(ref v) => {
+                    buf.extend(vars.get(&v[..]).ok_or(Error::VarNotFound)?.as_bytes())
                 }
             }
         }
         Ok(buf)
     }
 
-    pub fn extract_vars(&self, target: &mut HashSet<&'a [u8]>) {
+    pub fn extract_vars<'a>(&'a self, target: &mut HashSet<&'a [u8]>) {
         for chunk in &self.chunks {
-            if let Chunk::Var(v) = *chunk {
+            if let Chunk::Var(ref v) = *chunk {
                 target.insert(v);
             }
         }
     }
 }
 
-impl<'a> fmt::Debug for Chunk<'a> {
+impl<'a> fmt::Debug for Chunk {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let to_str = |body: &[u8]| {
-            str::from_utf8(body).unwrap_or("[binary]").to_owned()
-        };
+        let to_str = |body: &[u8]| str::from_utf8(body).unwrap_or("[binary]").to_owned();
         match *self {
-            Chunk::Str(b) => write!(f, "Str({:?})", to_str(b)),
-            Chunk::Var(b) => write!(f, "Var({:?})", to_str(b)),
+            Chunk::Str(ref b) => write!(f, "Str({:?})", to_str(b)),
+            Chunk::Var(ref b) => write!(f, "Var({:?})", to_str(b)),
         }
     }
 }
@@ -63,15 +61,16 @@ mod test {
     #[test]
     fn basic_parsing() {
         let parsed = Template::parse(b"Hello, {% who %}!").unwrap();
-        let chunks = vec![Chunk::Str(b"Hello, "), Chunk::Var(b"who"), Chunk::Str(b"!")];
+        let chunks = vec![Chunk::Str(b"Hello, ".to_vec()),
+                          Chunk::Var(b"who".to_vec()),
+                          Chunk::Str(b"!".to_vec())];
         assert_eq!(Template { chunks: chunks }, parsed);
     }
 
     #[test]
     fn escaped_parsing() {
         let parsed = Template::parse(b"Hello, \\{% who %}!").unwrap();
-        let chunks = vec![Chunk::Str(b"Hello, {% who %}!")];
+        let chunks = vec![Chunk::Str(b"Hello, {% who %}!".to_vec())];
         assert_eq!(Template { chunks: chunks }, parsed)
     }
 }
-
