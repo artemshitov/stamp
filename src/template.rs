@@ -1,9 +1,11 @@
 use std::collections::{HashSet, HashMap};
+use std::fmt;
+use std::str;
 
 use error::{Error, Result};
 use parser;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq)]
 pub enum Chunk<'a> {
     Str(&'a [u8]),
     Var(&'a [u8]),
@@ -40,6 +42,19 @@ impl<'a> Template<'a> {
         }
     }
 }
+
+impl<'a> fmt::Debug for Chunk<'a> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let to_str = |body: &[u8]| {
+            str::from_utf8(body).unwrap_or("[binary]").to_owned()
+        };
+        match *self {
+            Chunk::Str(b) => write!(f, "Str({:?})", to_str(b)),
+            Chunk::Var(b) => write!(f, "Var({:?})", to_str(b)),
+        }
+    }
+}
+
 
 #[cfg(test)]
 mod test {
