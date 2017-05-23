@@ -1,11 +1,7 @@
-use nom::{IResult, alpha, alphanumeric};
+use nom::{IResult, alpha, alphanumeric, rest};
 use std::vec::Vec;
 
 use template::Chunk;
-
-fn rest(i: &[u8]) -> IResult<&[u8], &[u8]> {
-    IResult::Done(&[], i)
-}
 
 named!(var_name<&[u8], Vec<u8>>,
     map!(
