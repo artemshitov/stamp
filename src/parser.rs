@@ -75,4 +75,11 @@ mod test {
         let chunks = vec![str!(b"Hello, "), str!(b"{%"), str!(b" who %}!")];
         assert_eq!(chunks, parsed)
     }
+
+    #[test]
+    fn no_vars() {
+        let (_, parsed) = template(b"Hello, world!").unwrap();
+        let chunks = vec![str!(b"Hello, world!")];
+        assert_eq!(chunks, parsed)
+    }
 }
