@@ -28,6 +28,13 @@ named!(var<Chunk>,
     )
 );
 
+named!(escaped<Chunk>,
+    do_parse!(
+        tag!("{%%") >>
+        (Chunk::Str(b"{%".to_vec()))
+    )
+);
+
 named!(literal<Chunk>,
     map!(
         alt_complete!(take_until!("{%") | rest),
@@ -37,7 +44,7 @@ named!(literal<Chunk>,
 
 named!(pub template<Vec<Chunk>>,
     many0!(
-        alt!(var | literal)
+        alt!(var | escaped | literal)
     )
 );
 
