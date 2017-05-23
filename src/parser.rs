@@ -40,3 +40,32 @@ named!(pub template<Vec<Chunk>>,
         alt!(var | literal)
     )
 );
+
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use template::Chunk;
+
+    macro_rules! str {
+        ($s: expr) => (Chunk::Str($s.to_vec()))
+    }
+
+    macro_rules! var {
+        ($s: expr) => (Chunk::Var($s.to_vec()))
+    }
+
+    #[test]
+    fn basic_parsing() {
+        let (_, parsed) = template(b"Hello, {% who %}!").unwrap();
+        let chunks = vec![str!(b"Hello, "), var!(b"who"), str!(b"!")];
+        assert_eq!(chunks, parsed);
+    }
+
+    #[test]
+    fn escaped_parsing() {
+        let (_, parsed) = template(b"Hello, {%% who %}!").unwrap();
+        let chunks = vec![str!(b"Hello, "), str!(b"{%"), str!(b" who %}!")];
+        assert_eq!(chunks, parsed)
+    }
+}

@@ -52,25 +52,3 @@ impl<'a> fmt::Debug for Chunk {
         }
     }
 }
-
-
-#[cfg(test)]
-mod test {
-    use super::*;
-
-    #[test]
-    fn basic_parsing() {
-        let parsed = Template::parse(b"Hello, {% who %}!").unwrap();
-        let chunks = vec![Chunk::Str(b"Hello, ".to_vec()),
-                          Chunk::Var(b"who".to_vec()),
-                          Chunk::Str(b"!".to_vec())];
-        assert_eq!(Template { chunks: chunks }, parsed);
-    }
-
-    #[test]
-    fn escaped_parsing() {
-        let parsed = Template::parse(b"Hello, \\{% who %}!").unwrap();
-        let chunks = vec![Chunk::Str(b"Hello, {% who %}!".to_vec())];
-        assert_eq!(Template { chunks: chunks }, parsed)
-    }
-}
