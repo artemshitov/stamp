@@ -1,9 +1,9 @@
-use nom::{IResult, alpha, alphanumeric, rest};
+use nom::{alpha, alphanumeric, rest};
 use std::vec::Vec;
 
 use template::Chunk;
 
-named!(var_name<&[u8], Vec<u8>>,
+named!(var_name<Vec<u8>>,
     map!(
         recognize!(
             do_parse!(
@@ -15,7 +15,7 @@ named!(var_name<&[u8], Vec<u8>>,
     )
 );
 
-named!(var<&[u8], Chunk>,
+named!(var<Chunk>,
     map!(
         ws!(
             delimited!(
@@ -28,14 +28,14 @@ named!(var<&[u8], Chunk>,
     )
 );
 
-named!(literal<&[u8], Chunk>,
+named!(literal<Chunk>,
     map!(
         alt_complete!(take_until!("{%") | rest),
         |s| Chunk::Str(Vec::from(s))
     )
 );
 
-named!(pub template<&[u8], Vec<Chunk>>,
+named!(pub template<Vec<Chunk>>,
     many0!(
         alt!(var | literal)
     )
