@@ -31,7 +31,7 @@ named!(var<&[u8], Chunk>,
 
 named!(literal<&[u8], Chunk>,
     map!(
-        alt!(take_until!("{%") | rest),
+        alt_complete!(take_until!("{%") | rest),
         Chunk::Str
     )
 );
