@@ -1,5 +1,5 @@
 use std::collections::{HashMap, HashSet};
-use std::io::{stdin, stdout, Write};
+use std::io::{Write, stdin, stdout};
 use std::string::String;
 
 use error::Result;
