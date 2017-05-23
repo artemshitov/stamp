@@ -12,7 +12,7 @@ pub enum Chunk<'a> {
     Var(&'a [u8]),
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct Template<'a> {
     chunks: Vec<Chunk<'a>>,
 }
@@ -46,3 +46,16 @@ impl<'a> Template<'a> {
         }
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn basic_parsing() {
+        let parsed = Template::parse(b"Hello, {% who %}!").unwrap();
+        let chunks = vec![Chunk::Str(b"Hello, "), Chunk::Var(b"who"), Chunk::Str(b"!")];
+        assert_eq!(Template { chunks: chunks }, parsed);
+    }
+}
+
