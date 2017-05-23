@@ -38,7 +38,7 @@ fn run() -> Result<()> {
     let dest = find_destination(dest_arg)?;
 
     let files = file::read_all_files(&source)?;
-    let (templates, vars) = compile_templates(&files);
+    let (templates, vars) = compile_templates(&files)?;
 
     println!("Fill in the variable values:");
     let conf = questions::get_vars(&vars)?;

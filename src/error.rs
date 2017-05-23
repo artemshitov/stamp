@@ -1,8 +1,10 @@
+use nom;
+use walkdir;
+
 use std::io;
 use std::string;
 use std::path;
 use std::result;
-use walkdir;
 
 quick_error! {
     #[derive(Debug)]
@@ -20,6 +22,10 @@ quick_error! {
         }
 
         FromUtf8Error(err: string::FromUtf8Error) {
+            from()
+        }
+
+        ParsingError(err: nom::IError) {
             from()
         }
 

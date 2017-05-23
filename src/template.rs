@@ -1,7 +1,4 @@
-use std::str;
 use std::collections::{HashSet, HashMap};
-
-use nom::IResult;
 
 use error::{Error, Result};
 use parser;
@@ -18,11 +15,8 @@ pub struct Template<'a> {
 }
 
 impl<'a> Template<'a> {
-    pub fn parse(i: &'a [u8]) -> Template<'a> {
-        match parser::template(i) {
-            IResult::Done(_, o) => Template { chunks: o },
-            _ => unreachable!(),
-        }
+    pub fn parse(i: &'a [u8]) -> Result<Template<'a>> {
+        Ok(Template { chunks: parser::template(i).to_full_result()? })
     }
 
     pub fn render(&self, vars: &HashMap<&[u8], String>) -> Result<Vec<u8>> {

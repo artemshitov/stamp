@@ -20,14 +20,14 @@ pub struct RenderedFile {
 const PATH_MUST_BE_UTF: &'static str = "Path must be a valid Unicode value";
 
 impl<'a> TemplateFile<'a> {
-    pub fn parse(path: &'a Path, body: &'a [u8]) -> TemplateFile<'a> {
-        let path_template = Template::parse(path.to_str().expect(PATH_MUST_BE_UTF).as_bytes());
-        let body_template = Template::parse(body);
+    pub fn parse(path: &'a Path, body: &'a [u8]) -> Result<TemplateFile<'a>> {
+        let path_template = Template::parse(path.to_str().expect(PATH_MUST_BE_UTF).as_bytes())?;
+        let body_template = Template::parse(body)?;
 
-        TemplateFile {
+        Ok(TemplateFile {
             path: path_template,
             body: body_template,
-        }
+        })
     }
 
     pub fn extract_vars(&self, target: &mut HashSet<&'a [u8]>) {
@@ -46,15 +46,15 @@ impl<'a> TemplateFile<'a> {
     }
 }
 
-pub fn compile_templates(files: &[(PathBuf, Vec<u8>)]) -> (Vec<TemplateFile>, HashSet<&[u8]>) {
+pub fn compile_templates(files: &[(PathBuf, Vec<u8>)]) -> Result<(Vec<TemplateFile>, HashSet<&[u8]>)> {
     let mut vars = HashSet::new();
     let mut templates = Vec::new();
 
     for &(ref path, ref content) in files {
-        let file = TemplateFile::parse(path, content);
+        let file = TemplateFile::parse(path, content)?;
         file.extract_vars(&mut vars);
         templates.push(file);
     }
 
-    (templates, vars)
+    Ok((templates, vars))
 }
