@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::string::String;
 
@@ -7,8 +7,8 @@ use template::Template;
 
 #[derive(Debug)]
 pub struct TemplateFile {
-    path: Template,
-    body: Template,
+    pub path: Template,
+    pub body: Template,
 }
 
 #[derive(Debug)]
@@ -28,11 +28,6 @@ impl TemplateFile {
                path: path_template,
                body: body_template,
            })
-    }
-
-    pub fn extract_vars<'a>(&'a self, target: &mut HashSet<&'a [u8]>) {
-        self.path.extract_vars(target);
-        self.body.extract_vars(target);
     }
 
     pub fn render(&self, vars: &HashMap<&[u8], String>) -> Result<RenderedFile> {

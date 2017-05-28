@@ -1,8 +1,10 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 use std::io::{Write, stdin, stdout};
 use std::string::String;
 
 use error::Result;
+use template::Chunk;
+use template_file::TemplateFile;
 
 fn ask(question: &str) -> Result<String> {
     print!("{}: ", question);
@@ -12,11 +14,19 @@ fn ask(question: &str) -> Result<String> {
     Ok(buf.trim().to_owned())
 }
 
-pub fn get_vars<'a>(questions: &'a HashSet<&'a [u8]>) -> Result<HashMap<&'a [u8], String>> {
+pub fn get_vars(templates: &[TemplateFile]) -> Result<HashMap<&[u8], String>> {
     let mut result = HashMap::new();
-    for question in questions {
-        let answer = ask(&String::from_utf8(question.to_vec())?)?;
-        let _ = result.insert(*question, answer);
+    for tf in templates {
+        for t in &[&tf.path, &tf.body] {
+            for chunk in &t.chunks {
+                if let Chunk::Var(ref v) = *chunk {
+                    if !result.contains_key(v.as_slice()) {
+                        let answer = ask(&String::from_utf8(v.clone())?)?;
+                        let _ = result.insert(v.as_slice(), answer);
+                    }
+                }
+            }
+        }
     }
     Ok(result)
 }

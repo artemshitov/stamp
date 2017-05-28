@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 use std::fmt;
 use std::str;
 
@@ -13,7 +13,7 @@ pub enum Chunk {
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct Template {
-    chunks: Vec<Chunk>,
+    pub chunks: Vec<Chunk>,
 }
 
 impl Template {
@@ -32,14 +32,6 @@ impl Template {
             }
         }
         Ok(buf)
-    }
-
-    pub fn extract_vars<'a>(&'a self, target: &mut HashSet<&'a [u8]>) {
-        for chunk in &self.chunks {
-            if let Chunk::Var(ref v) = *chunk {
-                target.insert(v);
-            }
-        }
     }
 }
 

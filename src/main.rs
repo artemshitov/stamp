@@ -17,7 +17,6 @@ mod template_file;
 use clap::{App, AppSettings};
 use colored::*;
 
-use std::collections::HashSet;
 use std::env;
 use std::path::{Path, PathBuf};
 
@@ -41,13 +40,8 @@ fn run() -> Result<()> {
     let files = file::read_all_files(&source)?;
     let templates = compile_templates(&files)?;
 
-    let mut vars = HashSet::new();
-    for t in &templates {
-        t.extract_vars(&mut vars);
-    }
-
     println!("Fill in the variable values:");
-    let conf = questions::get_vars(&vars)?;
+    let conf = questions::get_vars(&templates)?;
 
     let rendered = templates
         .iter()
